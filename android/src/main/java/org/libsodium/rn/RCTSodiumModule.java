@@ -60,6 +60,13 @@ public class RCTSodiumModule extends ReactContextBaseJavaModule {
     constants.put("crypto_sign_SECRETKEYBYTES", Sodium.crypto_sign_secretkeybytes());
     constants.put("crypto_sign_SEEDBYTES", Sodium.crypto_sign_seedbytes());
     constants.put("crypto_sign_BYTES", Sodium.crypto_sign_bytes());
+    constants.put("crypto_generichash_BYTES", Sodium.crypto_generichash_bytes());
+    constants.put("crypto_generichash_BYTES_MIN", Sodium.crypto_generichash_bytes_min());
+    constants.put("crypto_generichash_BYTES_MAX", Sodium.crypto_generichash_bytes_max());
+    constants.put("crypto_generichash_KEYBYTES", Sodium.crypto_generichash_keybytes());
+    constants.put("crypto_generichash_KEYBYTES_MIN", Sodium.crypto_generichash_keybytes_min());
+    constants.put("crypto_generichash_KEYBYTES_MAX", Sodium.crypto_generichash_keybytes_max());
+    constants.put("crypto_generichash_PRIMITIVE", Sodium.crypto_generichash_primitive());
     constants.put("crypto_pwhash_SALTBYTES", Sodium.crypto_pwhash_salt_bytes());
     constants.put("crypto_pwhash_OPSLIMIT_MODERATE", Sodium.crypto_pwhash_opslimit_moderate());
     constants.put("crypto_pwhash_OPSLIMIT_MIN", Sodium.crypto_pwhash_opslimit_min());
@@ -448,6 +455,26 @@ public class RCTSodiumModule extends ReactContextBaseJavaModule {
     catch (Throwable t) {
       p.reject(ESODIUM,ERR_FAILURE,t);
     }
+  }
+
+  @ReactMethod
+  public void crypto_generichash(final Integer outlen, final String data, final String key, final Promise p) {
+    runOnExecutor(() -> {
+      try {
+        byte[] keyb = Base64.decode(key, Base64.NO_WRAP);
+        byte[] datab = Base64.decode(data, Base64.NO_WRAP);
+        byte[] out = new byte[outlen];
+
+        int result = Sodium.crypto_generichash(out, out.length, datab, datab.length, keyb, keyb.length);
+        if (result != 0)
+          p.reject(ESODIUM,ERR_FAILURE);
+        else
+          p.resolve(Base64.encodeToString(out, Base64.NO_WRAP));
+      }
+      catch (Throwable t) {
+        p.reject(ESODIUM,ERR_FAILURE,t);
+      }
+    });
   }
 
   @ReactMethod

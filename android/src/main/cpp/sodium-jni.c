@@ -266,6 +266,94 @@ JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1box_1seal_1open(
   return (jint) result;
 }
 
+  /* *****************************************************************************
+ * Generic hashing - The generichash* API
+ * *****************************************************************************
+ */
+  JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1generichash(JNIEnv *jenv, jclass jcls, jbyteArray j_out, jlong j_olong, jbyteArray j_in, jlong j_ilen, jbyteArray j_key, jint j_klen)
+  {
+    unsigned char *in = (unsigned char *)(*jenv)->GetByteArrayElements(jenv, j_in, 0);
+    unsigned char *key = (unsigned char *)(*jenv)->GetByteArrayElements(jenv, j_key, 0);
+    unsigned char *out = (unsigned char *)(*jenv)->GetByteArrayElements(jenv, j_out, 0);
+
+    int result = crypto_generichash(out, (unsigned long long)j_olong, in, (unsigned long long)j_ilen, key, (unsigned long long)j_klen);
+
+    (*jenv)->ReleaseByteArrayElements(jenv, j_in, (jbyte *)in, 0);
+    (*jenv)->ReleaseByteArrayElements(jenv, j_key, (jbyte *)key, 0);
+    (*jenv)->ReleaseByteArrayElements(jenv, j_out, (jbyte *)out, 0);
+    return (jint)result;
+  }
+
+  JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1generichash_1bytes(JNIEnv *jenv, jclass jcls)
+  {
+    return (jint)crypto_generichash_BYTES;
+  }
+
+  JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1generichash_1bytes_1min(JNIEnv *jenv, jclass jcls)
+  {
+    return (jint)crypto_generichash_BYTES_MIN;
+  }
+
+  JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1generichash_1bytes_1max(JNIEnv *jenv, jclass jcls)
+  {
+    return (jint)crypto_generichash_BYTES_MAX;
+  }
+
+  JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1generichash_1keybytes(JNIEnv *jenv, jclass jcls)
+  {
+    return (jint)crypto_generichash_KEYBYTES;
+  }
+
+  JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1generichash_1keybytes_1min(JNIEnv *jenv, jclass jcls)
+  {
+    return (jint)crypto_generichash_KEYBYTES_MIN;
+  }
+
+  JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1generichash_1keybytes_1max(JNIEnv *jenv, jclass jcls)
+  {
+    return (jint)crypto_generichash_KEYBYTES_MAX;
+  }
+
+  JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1generichash_1init(JNIEnv *jenv, jclass jcls, jbyteArray j_state, jbyteArray j_key, jlong j_klen, jint j_olen)
+  {
+    unsigned char *state = (unsigned char *)(*jenv)->GetByteArrayElements(jenv, j_state, 0);
+    unsigned char *key = (unsigned char *)(*jenv)->GetByteArrayElements(jenv, j_key, 0);
+
+    int result = crypto_generichash_init(state, key, (unsigned long long)j_klen, (unsigned long long)j_olen);
+
+    (*jenv)->ReleaseByteArrayElements(jenv, j_state, (jbyte *)state, 0);
+    (*jenv)->ReleaseByteArrayElements(jenv, j_key, (jbyte *)key, 0);
+    return (jint)result;
+  }
+
+  JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1generichash_1update(JNIEnv *jenv, jclass jcls, jbyteArray j_state, jbyteArray j_in, jlong j_ilen)
+  {
+    unsigned char *state = (unsigned char *)(*jenv)->GetByteArrayElements(jenv, j_state, 0);
+    unsigned char *in = (unsigned char *)(*jenv)->GetByteArrayElements(jenv, j_in, 0);
+
+    int result = crypto_generichash_update(state, in, (unsigned long long)j_ilen);
+
+    (*jenv)->ReleaseByteArrayElements(jenv, j_state, (jbyte *)state, 0);
+    (*jenv)->ReleaseByteArrayElements(jenv, j_in, (jbyte *)in, 0);
+    return (jint)result;
+  }
+
+  JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1generichash_1final(JNIEnv *jenv, jclass jcls, jbyteArray j_state, jbyteArray j_out, jlong j_olen)
+  {
+    unsigned char *state = (unsigned char *)(*jenv)->GetByteArrayElements(jenv, j_state, 0);
+    unsigned char *out = (unsigned char *)(*jenv)->GetByteArrayElements(jenv, j_out, 0);
+
+    int result = crypto_generichash_final(state, out, (unsigned long long)j_olen);
+
+    (*jenv)->ReleaseByteArrayElements(jenv, j_state, (jbyte *)state, 0);
+    (*jenv)->ReleaseByteArrayElements(jenv, j_out, (jbyte *)out, 0);
+    return (jint)result;
+  }
+
+  /* *****************************************************************************
+ * Password hashing - The pwhash* API
+ * *****************************************************************************
+ */
 JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1pwhash(JNIEnv *jenv, jclass jcls, jbyteArray j_out, jlong j_olong, jbyteArray j_p, jlong j_plen, jbyteArray j_salt, jlong j_opslimit, jlong jmemlimit, jint j_algo) {
   const char *password = (const char *) (*jenv)->GetByteArrayElements(jenv, j_p, 0);
   unsigned char *salt = (unsigned char *) (*jenv)->GetByteArrayElements(jenv, j_salt, 0);

@@ -53,6 +53,13 @@ RCT_EXPORT_MODULE();
         @"crypto_sign_SECRETKEYBYTES": @crypto_sign_SECRETKEYBYTES,
         @"crypto_sign_SEEDBYTES": @crypto_sign_SEEDBYTES,
         @"crypto_sign_BYTES": @crypto_sign_BYTES,
+        @"crypto_generichash_BYTES": @crypto_generichash_BYTES,
+        @"crypto_generichash_BYTES_MIN": @crypto_generichash_BYTES_MIN,
+        @"crypto_generichash_BYTES_MAX": @crypto_generichash_BYTES_MAX,
+        @"crypto_generichash_KEYBYTES": @crypto_generichash_KEYBYTES,
+        @"crypto_generichash_KEYBYTES_MIN": @crypto_generichash_KEYBYTES_MIN,
+        @"crypto_generichash_KEYBYTES_MAX": @crypto_generichash_KEYBYTES_MAX,
+        @"crypto_generichash_PRIMITIVE": @crypto_generichash_PRIMITIVE,
         @"crypto_pwhash_SALTBYTES": @crypto_pwhash_SALTBYTES,
         @"crypto_pwhash_OPSLIMIT_MODERATE":@crypto_pwhash_OPSLIMIT_MODERATE,
         @"crypto_pwhash_OPSLIMIT_MIN":@crypto_pwhash_OPSLIMIT_MIN,
@@ -384,6 +391,23 @@ RCT_EXPORT_METHOD(crypto_box_seal:(NSString*)m pk:(NSString*)pk resolve:(RCTProm
         reject(ESODIUM,ERR_FAILURE,nil);
     else
         resolve([[NSData dataWithBytesNoCopy:dc length:cipher_len freeWhenDone:NO] base64EncodedStringWithOptions:0]);
+}
+
+RCT_EXPORT_METHOD(crypto_generichash:(nonnull NSNumber*)outlen data:(NSString*)data key:(NSString*)key resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject)
+{
+    const NSData *ddata = [[NSData alloc] initWithBase64EncodedString:data options:0];
+    const NSData *dkey = [[NSData alloc] initWithBase64EncodedString:key options:0];
+    unsigned long long out_len = [outlen unsignedLongLongValue];
+    unsigned char *out = (unsigned char *) sodium_malloc(out_len);
+
+    if (crypto_generichash(out, out_len,
+                      [ddata bytes],
+                      [ddata length],
+                      [dkey bytes],
+                      [dkey length]))
+        reject(ESODIUM, ERR_FAILURE, nil);
+    else
+        resolve([[NSData dataWithBytesNoCopy:out length:out_len freeWhenDone:NO] base64EncodedStringWithOptions:0]);
 }
 
 RCT_EXPORT_METHOD(crypto_pwhash:(nonnull NSNumber*)keylen password:(NSString*)password salt:(NSString*)salt opslimit:(nonnull NSNumber*)opslimit memlimit:(nonnull NSNumber*)memlimit algo:(nonnull NSNumber*)algo resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject)

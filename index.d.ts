@@ -178,6 +178,12 @@ export function crypto_box_seal_open(
   privateKey: string
 ): Promise<string>;
 
+export function crypto_generichash(
+  outlen: number,
+  data: string,
+  key: string | null,
+): Promise<string>;
+
 export function crypto_pwhash(
   keyLength: number,
   password: string,

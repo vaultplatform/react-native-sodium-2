@@ -392,21 +392,21 @@ RCT_EXPORT_METHOD(crypto_box_seal:(NSString*)m pk:(NSString*)pk resolve:(RCTProm
     else
         resolve([[NSData dataWithBytesNoCopy:dc length:cipher_len freeWhenDone:NO] base64EncodedStringWithOptions:0]);
 }
-
 RCT_EXPORT_METHOD(crypto_generichash:(nonnull NSNumber*)outlen data:(NSString*)data key:(NSString*)key resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject)
 {
     const NSData *ddata = [[NSData alloc] initWithBase64EncodedString:data options:0];
-    const NSData *dkey = [[NSData alloc] initWithBase64EncodedString:key options:0];
+    const NSData *dkey = key ? [key dataUsingEncoding:NSUTF8StringEncoding] : NULL;
+    unsigned long dkeylen = key ? dkey.length : 0;
     unsigned long long out_len = [outlen unsignedLongLongValue];
     unsigned char *out = (unsigned char *) sodium_malloc(out_len);
 
     if (crypto_generichash(out, out_len,
-                      [ddata bytes],
-                      [ddata length],
-                      [dkey bytes],
-                      [dkey length]))
+                        [ddata bytes],
+                        [ddata length],
+                        dkey ? [dkey bytes] : NULL,
+                           dkeylen))
         reject(ESODIUM, ERR_FAILURE, nil);
-    else
+    else 
         resolve([[NSData dataWithBytesNoCopy:out length:out_len freeWhenDone:NO] base64EncodedStringWithOptions:0]);
 }
 

@@ -44,7 +44,7 @@ public class SodiumJNI {
   public final static native int crypto_generichash_keybytes();
   public final static native int crypto_generichash_keybytes_min();
   public final static native int crypto_generichash_keybytes_max();
-  public final static native byte[] crypto_generichash_primitive();
+  // public final static native String crypto_generichash_primitive();
   public final static native int crypto_generichash(byte[] out, final long olen, final byte[] in, final long ilen, byte[] key, final long klen);
   public final static native int crypto_generichash_statebytes();
   public final static native int crypto_generichash_init(byte[] state, byte[] key, int klen, int olen);

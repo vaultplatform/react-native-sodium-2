@@ -62,9 +62,9 @@ extern "C"
   }
 
   /* *****************************************************************************
- * Secret-key cryptography - authenticated encryption
- * *****************************************************************************
- */
+   * Secret-key cryptography - authenticated encryption
+   * *****************************************************************************
+   */
   JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1secretbox_1keybytes(JNIEnv *jenv, jclass jcls)
   {
     return (jint)crypto_secretbox_KEYBYTES;
@@ -109,9 +109,9 @@ extern "C"
   }
 
   /* *****************************************************************************
- * Secret-key cryptography - authentication
- * *****************************************************************************
- */
+   * Secret-key cryptography - authentication
+   * *****************************************************************************
+   */
   JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1auth_1bytes(JNIEnv *jenv, jclass jcls)
   {
     return (jint)crypto_auth_BYTES;
@@ -152,9 +152,9 @@ extern "C"
   }
 
   /* *****************************************************************************
- * Public-key cryptography - authenticated encryption
- * *****************************************************************************
- */
+   * Public-key cryptography - authenticated encryption
+   * *****************************************************************************
+   */
   JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1box_1publickeybytes(JNIEnv *jenv, jclass jcls)
   {
     return (jint)crypto_box_PUBLICKEYBYTES;
@@ -294,19 +294,20 @@ extern "C"
   }
 
   /* *****************************************************************************
- * Generic hashing - The generichash* API
- * *****************************************************************************
- */
+   * Generic hashing - The generichash* API
+   * *****************************************************************************
+   */
   JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1generichash(JNIEnv *jenv, jclass jcls, jbyteArray j_out, jlong j_olong, jbyteArray j_in, jlong j_ilen, jbyteArray j_key, jint j_klen)
   {
     unsigned char *in = (unsigned char *)(*jenv)->GetByteArrayElements(jenv, j_in, 0);
-    unsigned char *key = (unsigned char *)(*jenv)->GetByteArrayElements(jenv, j_key, 0);
+    unsigned char *key = j_key != NULL ? (unsigned char *)(*jenv)->GetByteArrayElements(jenv, j_key, 0) : NULL;
+    ;
     unsigned char *out = (unsigned char *)(*jenv)->GetByteArrayElements(jenv, j_out, 0);
 
     int result = crypto_generichash(out, (unsigned long long)j_olong, in, (unsigned long long)j_ilen, key, (unsigned long long)j_klen);
 
     (*jenv)->ReleaseByteArrayElements(jenv, j_in, (jbyte *)in, 0);
-    (*jenv)->ReleaseByteArrayElements(jenv, j_key, (jbyte *)key, 0);
+    key != NULL ? (*jenv)->ReleaseByteArrayElements(jenv, j_key, (jbyte *)key, 0) : NULL;
     (*jenv)->ReleaseByteArrayElements(jenv, j_out, (jbyte *)out, 0);
     return (jint)result;
   }
@@ -383,9 +384,9 @@ extern "C"
   }
 
   /* *****************************************************************************
- * Password hashing - The pwhash* API
- * *****************************************************************************
- */
+   * Password hashing - The pwhash* API
+   * *****************************************************************************
+   */
   JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1pwhash(JNIEnv *jenv, jclass jcls, jbyteArray j_out, jlong j_olong, jbyteArray j_p, jlong j_plen, jbyteArray j_salt, jlong j_opslimit, jlong jmemlimit, jint j_algo)
   {
     const char *password = (const char *)(*jenv)->GetByteArrayElements(jenv, j_p, 0);
@@ -461,9 +462,9 @@ extern "C"
   }
 
   /* *****************************************************************************
- * Public-key cryptography - signatures
- * *****************************************************************************
- */
+   * Public-key cryptography - signatures
+   * *****************************************************************************
+   */
 
   JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1sign_1secretkeybytes(JNIEnv *jenv, jclass jcls)
   {
@@ -483,6 +484,18 @@ extern "C"
   JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1sign_1bytes(JNIEnv *jenv, jclass jcls)
   {
     return (jint)crypto_sign_BYTES;
+  }
+
+  JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1sign(JNIEnv *jenv, jclass jcls, jbyteArray j_msig, jbyteArray j_msg, jint j_msg_len, jbyteArray j_sk)
+  {
+    unsigned char *msig = (unsigned char *)(*jenv)->GetByteArrayElements(jenv, j_msig, 0);
+    unsigned char *msg = (unsigned char *)(*jenv)->GetByteArrayElements(jenv, j_msg, 0);
+    unsigned char *sk = (unsigned char *)(*jenv)->GetByteArrayElements(jenv, j_sk, 0);
+    int result = crypto_sign(msig, NULL, msg, j_msg_len, sk);
+    (*jenv)->ReleaseByteArrayElements(jenv, j_msig, (jbyte *)msig, 0);
+    (*jenv)->ReleaseByteArrayElements(jenv, j_msg, (jbyte *)msg, 0);
+    (*jenv)->ReleaseByteArrayElements(jenv, j_sk, (jbyte *)sk, 0);
+    return (jint)result;
   }
 
   JNIEXPORT jint JNICALL Java_org_libsodium_jni_SodiumJNI_crypto_1sign_1detached(JNIEnv *jenv, jclass jcls, jbyteArray j_sig, jbyteArray j_msg, jint j_msg_len, jbyteArray j_sk)

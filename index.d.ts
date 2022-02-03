@@ -217,6 +217,11 @@ export function crypto_sign(
   privateKey: string
 ): Promise<string>;
 
+export function crypto_sign(
+  message: string,
+  privateKey: string
+): Promise<string>;
+
 export function crypto_sign_detached(
   message: string,
   privateKey: string

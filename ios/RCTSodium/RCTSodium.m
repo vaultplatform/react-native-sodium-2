@@ -462,6 +462,19 @@ RCT_EXPORT_METHOD(crypto_scalarmult_base:(NSString*)n resolve:(RCTPromiseResolve
 // *****************************************************************************
 // * Public-key cryptography - signatures
 // *****************************************************************************
+RCT_EXPORT_METHOD(crypto_sign:(NSString*)msg sk:(NSString*)sk resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject)
+{
+    const NSData *dmsg = [[NSData alloc] initWithBase64EncodedString:msg options:0];
+    const NSData *dsk  = [[NSData alloc] initWithBase64EncodedString:sk options:0];
+    unsigned char *dsigm = (unsigned char *) sodium_malloc(crypto_sign_BYTES + dmsg.length);
+    if (!dsigm || !dmsg || !dsk) reject(ESODIUM,ERR_FAILURE,nil);
+    else if (dsk.length != crypto_sign_SECRETKEYBYTES) reject(ESODIUM,ERR_BAD_KEY,nil);
+    else if (crypto_sign(dsigm, nil, [dmsg bytes], dmsg.length, [dsk bytes]) != 0)
+        reject(ESODIUM,ERR_FAILURE,nil);
+    else
+        resolve([[NSData dataWithBytesNoCopy:dsigm length:(crypto_sign_SECRETKEYBYTES + dmsg.length) freeWhenDone:NO]  base64EncodedStringWithOptions:0]);
+    sodium_free(dsigm);
+}
 
 RCT_EXPORT_METHOD(crypto_sign_detached:(NSString*)msg sk:(NSString*)sk resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject)
 {

@@ -69,6 +69,7 @@ public class SodiumJNI {
   public final static native int crypto_sign_secretkeybytes();
   public final static native int crypto_sign_seedbytes();
   public final static native int crypto_sign_bytes();
+  public final static native int crypto_sign(byte[] msig, final byte[] msg, final int msg_len, final byte[] sk);
   public final static native int crypto_sign_detached(byte[] sig, final byte[] msg, final int msg_len, final byte[] sk);
   public final static native int crypto_sign_verify_detached(byte[] sig, byte[] msg, long msg_len, final byte[] pk);
   public final static native int crypto_sign_keypair(byte[] pk, byte[] sk);

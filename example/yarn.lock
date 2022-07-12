@@ -879,6 +879,11 @@
     sudo-prompt "^9.0.0"
     wcwidth "^1.0.1"
 
+"@snyk/protect@^1.970.0":
+  version "1.970.0"
+  resolved "https://registry.yarnpkg.com/@snyk/protect/-/protect-1.970.0.tgz#50bda90a633c9c7c549cd433e599caf30d18626a"
+  integrity sha512-6PLsqgbYw15RK0HVzrSGODWzr0Ofiia1rqZ87tdaMII2Uy/nLuNttX6UXWEY207b591Kfb/j4pne9QZrqqCtFw==
+
 "@types/base64-js@^1.2.5":
   version "1.2.5"
   resolved "https://registry.yarnpkg.com/@types/base64-js/-/base64-js-1.2.5.tgz#582b2476169a6cba460a214d476c744441d873d5"
